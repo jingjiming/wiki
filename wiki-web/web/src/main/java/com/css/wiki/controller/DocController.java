@@ -18,24 +18,4 @@ import java.io.InputStream;
 @RequestMapping("/doc")
 public class DocController {
 
-    @GetMapping("/init")
-    @ResponseBody
-    public JsonResult init() {
-        try {
-            // 文档目录
-            String path = "D:\\backup\\2";
-            File dir = new File(path);
-            File[] files = dir.listFiles();
-            String resutl = null;
-            // 计数
-            for (File file : files) {
-                InputStream is = new FileInputStream(file);
-                resutl = ReadDocUtil.readDoc(is);
-            }
-            return JsonResult.ok(resutl);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return JsonResult.badRequest();
-    }
 }

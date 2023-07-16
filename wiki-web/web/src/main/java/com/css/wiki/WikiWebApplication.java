@@ -22,7 +22,6 @@ import java.net.InetAddress;
  * Created by jiming.jing on 2023/1/18
  */
 @SpringBootApplication
-@EnableOpenApi
 @EnableScheduling //开启定时任务
 @EnableAsync
 @ComponentScan(basePackages = {"com.css"})

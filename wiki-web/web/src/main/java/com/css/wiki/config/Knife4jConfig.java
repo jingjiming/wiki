@@ -4,9 +4,12 @@ import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import io.swagger.annotations.Api;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.Contact;
@@ -16,22 +19,27 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Arrays;
 
+/**
+ * swagger3文档访问地址：http://ip:port/swagger-ui/index.html
+ */
+
 @Configuration
 @EnableSwagger2
 @EnableKnife4j
+@EnableOpenApi
 public class Knife4jConfig {
 
-    public static final String VERSION = "1.0.0";
-
     @Bean
-    public Docket createRestApi() {
+    public Docket defaultApi(Environment environment) {
+        Profiles profiles = Profiles.of("dev", "native", "test");
+        boolean flag = environment.acceptsProfiles(profiles);
         //设置请求头参数
-        return new Docket(DocumentationType.SWAGGER_2)
-                //.enable(true)
+        return new Docket(DocumentationType.OAS_30)
+                .enable(flag)
                 .apiInfo(apiInfo())
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                .apis(RequestHandlerSelectors.basePackage("com.css"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -42,9 +50,11 @@ public class Knife4jConfig {
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("wiki-web")
+        return new ApiInfoBuilder()
+                .title("wiki-web")
                 .description("Wiki API接口文档")
-                .contact(new Contact("wiki-web", "http://localhost:8080/doc.html", ""))
-                .version(VERSION).build();
+                .contact(new Contact("wiki-web", "http://www.apache.org/licenses/LICENSE-2.0", ""))
+                .version("1.0")
+                .build();
     }
 }

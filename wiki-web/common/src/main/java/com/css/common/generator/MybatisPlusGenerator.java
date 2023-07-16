@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.converts.DmTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.querys.DMQuery;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
@@ -49,11 +51,11 @@ public class MybatisPlusGenerator {
     public static DataSourceConfig.Builder dataSourceConfig() {
         DataSourceConfig.Builder builder = new DataSourceConfig
                 .Builder(
-                "jdbc:dm://localhost:5236/m_db_product?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8",
-                "PRODUCT",
-                "Admin123!@#")
-                .dbQuery(new DMQuery())
-                .typeConvert(new DmTypeConvert());
+                "jdbc:mysql://localhost:3306/wiki?characterEncoding=utf8&serverTimezone=GMT%2B8",
+                "root",
+                "admin")
+                .dbQuery(new MySqlQuery())
+                .typeConvert(new MySqlTypeConvert());
         return builder;
     }
 
@@ -66,12 +68,12 @@ public class MybatisPlusGenerator {
         // 多modules工程配置，单体工程无需此配置
         HashMap<OutputFile, String> pathMap = new HashMap<OutputFile, String>() {
             {
-                put(OutputFile.entity, projectPath + "/model/src/main/java/com/css/bootbase/entity/");
-                put(OutputFile.service, projectPath + "/service/src/main/java/com/css/bootbase/service/");
-                put(OutputFile.serviceImpl, projectPath + "/service/src/main/java/com/css/bootbase/service/impl/");
-                put(OutputFile.mapper, projectPath + "/service/src/main/java/com/css/bootbase/mapper/");
-                put(OutputFile.xml, projectPath + "/service/src/main/resources/mybatis/mapper/");
-                put(OutputFile.controller, projectPath + "/web/src/main/java/com/css/bootbase/controller/");
+                put(OutputFile.entity, projectPath + "/wiki-web/model/src/main/java/com/css/wiki/entity/");
+                put(OutputFile.service, projectPath + "/wiki-web/service/src/main/java/com/css/wiki/service/");
+                put(OutputFile.serviceImpl, projectPath + "/wiki-web/service/src/main/java/com/css/wiki/service/impl/");
+                put(OutputFile.mapper, projectPath + "/wiki-web/service/src/main/java/com/css/wiki/mapper/");
+                put(OutputFile.xml, projectPath + "/wiki-web/service/src/main/resources/mybatis/mapper/");
+                put(OutputFile.controller, projectPath + "/wiki-web/web/src/main/java/com/css/wiki/controller/");
 
             }
         };
@@ -92,17 +94,19 @@ public class MybatisPlusGenerator {
                         .dateType(DateType.TIME_PACK)
                         // 生成日期
                         .commentDate("yyyy/MM/dd")
+                        // 覆盖已生成文件
+                        //.fileOverride()
                 )
                 // 包配置
                 .packageConfig(builder -> builder
-                        .parent("com.css.bootbase")
+                        .parent("com.css.wiki")
                         .pathInfo(pathMap)
                 )
                 // 策略配置
                 .strategyConfig((scanner, builder) -> {
                     builder.addInclude(tableNames)
                             // 增加过滤表前缀
-                            .addTablePrefix("T_")
+                            //.addTablePrefix("T_")
                             // 增加过滤字段前缀
                             //.addFieldPrefix("F_")
 

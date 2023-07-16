@@ -48,19 +48,38 @@
     <a-layout-content
       :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      Content
+      {{ebooks}}
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, ref, reactive, toRef } from 'vue';
 import {LaptopOutlined, NotificationOutlined, UserOutlined} from "@ant-design/icons-vue"; // @ is an alias to /src
-
+import axios from 'axios';
 export default defineComponent({
   name: 'Home',
   components: {
     NotificationOutlined, LaptopOutlined, UserOutlined,
   },
+  setup() {
+    console.log("setup");
+    const ebooks = ref();
+    //const ebooks = reactive({books: []})
+
+    onMounted(() => {
+      console.log("onMounted");
+      axios.get("http://localhost:8081/ebook/list").then((res) => {
+        const data = res.data;
+        ebooks.value = data.data;
+        //ebooks.books = data.data;
+      });
+    });
+
+    return {
+      ebooks
+      //ebooks: toRef(ebooks, "books")
+    }
+  }
 });
 </script>
