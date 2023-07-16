@@ -2,22 +2,23 @@
   <a-layout>
     <the-header></the-header>
     <router-view/>
-    <a-layout-footer style="text-align: center">
-      Ant Design ©2018 Created by Ant UED
-    </a-layout-footer>
+    <the-footer></the-footer>
   </a-layout>
 </template>
 
 <script lang="ts">
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
+
 import TheHeader from "@/components/the-header.vue";
+import TheFooter from "@/components/the-footer.vue";
 export default defineComponent({
   components: {
     UserOutlined,
     LaptopOutlined,
     NotificationOutlined,
     TheHeader,
+    TheFooter,
   },
   setup() {
     return {
