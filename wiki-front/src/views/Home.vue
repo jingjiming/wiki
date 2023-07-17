@@ -98,7 +98,6 @@ export default defineComponent({
     MessageOutlined,
   },*/
   setup() {
-    console.log("setup");
     const ebooks = ref();
     //const ebooks = reactive({books: []})
 
@@ -115,9 +114,7 @@ export default defineComponent({
     ];
 
     onMounted(() => {
-      console.log("onMounted");
       axios.get("/ebook/list").then((res) => {
-        console.log(res);
         const data = res.data;
         ebooks.value = data.data;
         //ebooks.books = data.data;
