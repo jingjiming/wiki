@@ -7,16 +7,16 @@
 </template>
 
 <script lang="ts">
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
+//import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons-vue';
 import { defineComponent, ref } from 'vue';
 
 import TheHeader from "@/components/the-header.vue";
 import TheFooter from "@/components/the-footer.vue";
 export default defineComponent({
   components: {
-    UserOutlined,
+    /*UserOutlined,
     LaptopOutlined,
-    NotificationOutlined,
+    NotificationOutlined,*/
     TheHeader,
     TheFooter,
   },
