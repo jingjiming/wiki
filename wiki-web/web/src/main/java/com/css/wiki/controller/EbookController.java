@@ -1,13 +1,15 @@
 package com.css.wiki.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.css.common.beans.response.JsonResult;
+import com.css.common.util.SnowFlake;
+import com.css.wiki.dto.EbookQueryDTO;
 import com.css.wiki.entity.Ebook;
 import com.css.wiki.service.EbookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -23,10 +25,33 @@ public class EbookController {
 
     @Autowired
     EbookService ebookService;
+    @Autowired
+    SnowFlake snowFlake;
 
-    @RequestMapping("/list")
-    public JsonResult list() {
-        List<Ebook> list = this.ebookService.list();
+    @GetMapping("/list")
+    public JsonResult<Ebook> list(@Valid EbookQueryDTO dto) {
+        Page<Ebook> list = this.ebookService.findByPage(dto.getPageNum(), dto.getPageSize());
         return JsonResult.ok().data(list);
+    }
+
+    @PostMapping("/add")
+    public JsonResult add(@RequestBody Ebook ebook) {
+        boolean flag = false;
+        if (ebook.getId() == null) {
+            ebook.setId(this.snowFlake.nextId());
+            flag = this.ebookService.save(ebook);
+        } else {
+            flag = this.ebookService.updateById(ebook);
+        }
+        if (flag) {
+            return JsonResult.ok();
+        }
+        return JsonResult.badRequest();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public JsonResult delete(@PathVariable Long id) {
+        this.ebookService.removeById(id);
+        return JsonResult.ok();
     }
 }

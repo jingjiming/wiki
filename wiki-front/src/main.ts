@@ -7,7 +7,18 @@ import 'ant-design-vue/dist/antd.css';
 import * as Icons from '@ant-design/icons-vue';
 import axios from 'axios';
 
+import JSONBIG from 'json-bigint';
+
 axios.defaults.baseURL = process.env.VUE_APP_SERVER;
+
+axios.defaults.transformResponse = [
+  function (data) {
+    const json = JSONBIG({
+      storeAsString: true
+    })
+    return JSONBIG.parse(data)
+  }
+]
 /**
  * axios拦截器
  */
