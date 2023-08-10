@@ -2,6 +2,7 @@ package com.css.wiki.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.css.wiki.dto.EbookQueryDTO;
 import com.css.wiki.entity.Ebook;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -15,6 +16,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface EbookService extends IService<Ebook> {
 
-    Page<Ebook> findByPage(Integer pageNum, Integer pageSize);
+    Page<Ebook> findByPage(EbookQueryDTO dto);
 
 }

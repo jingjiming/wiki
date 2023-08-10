@@ -32,7 +32,7 @@ public class EbookController {
 
     @GetMapping("/list")
     public JsonResult<Ebook> list(@Valid EbookQueryDTO dto) {
-        Page<Ebook> list = this.ebookService.findByPage(dto.getPageNum(), dto.getPageSize());
+        Page<Ebook> list = this.ebookService.findByPage(dto);
         return JsonResult.ok().data(list);
     }
 

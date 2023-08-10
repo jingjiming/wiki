@@ -1,7 +1,10 @@
 package com.css.wiki.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
+import com.css.common.util.StringUtils;
+import com.css.wiki.dto.EbookQueryDTO;
 import com.css.wiki.entity.Ebook;
 import com.css.wiki.mapper.EbookMapper;
 import com.css.wiki.service.EbookService;
@@ -20,8 +23,10 @@ import org.springframework.stereotype.Service;
 public class EbookServiceImpl extends ServiceImpl<EbookMapper, Ebook> implements EbookService {
 
     @Override
-    public Page<Ebook> findByPage(Integer pageNum, Integer pageSize) {
-        Page page = new Page(pageNum, pageSize);
-        return this.page(page);
+    public Page<Ebook> findByPage(EbookQueryDTO dto) {
+        QueryWrapper<Ebook> qw = new QueryWrapper<Ebook>();
+        qw.like(StringUtils.isNotBlank(dto.getName()), "name", dto.getName());
+        Page page = new Page(dto.getPageNum(), dto.getPageSize());
+        return this.page(page, qw);
     }
 }
