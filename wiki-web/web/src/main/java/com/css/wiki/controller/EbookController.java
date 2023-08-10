@@ -2,7 +2,9 @@ package com.css.wiki.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.css.common.beans.response.JsonResult;
+import com.css.common.util.CopyUtil;
 import com.css.common.util.SnowFlake;
+import com.css.wiki.dto.EbookAddDTO;
 import com.css.wiki.dto.EbookQueryDTO;
 import com.css.wiki.entity.Ebook;
 import com.css.wiki.service.EbookService;
@@ -35,8 +37,9 @@ public class EbookController {
     }
 
     @PostMapping("/add")
-    public JsonResult add(@RequestBody Ebook ebook) {
+    public JsonResult add(@Valid @RequestBody EbookAddDTO dto) {
         boolean flag = false;
+        Ebook ebook = CopyUtil.copy(dto, Ebook.class);
         if (ebook.getId() == null) {
             ebook.setId(this.snowFlake.nextId());
             flag = this.ebookService.save(ebook);
