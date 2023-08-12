@@ -10,18 +10,17 @@
             </a-input>
           </a-form-item>
           <a-form-item>
-            <a-button type="primary" @click="handleQuery({pageNum: 1, pageSize: pagination.pageSize})">查询</a-button>
+            <a-button type="primary" @click="handleQuery()">查询</a-button>
           </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="add">新增</a-button>
           </a-form-item>
         </a-form>
       </p>
-      <a-table :columns="columns" :data-source="categorys"
-               :pagination = "pagination"
+      <a-table :columns="columns" :data-source="level1"
+               :pagination = "false"
                :loading="loading"
                :row-key="record => record.id"
-               @change = "handleTableChange"
       >
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar" />
@@ -75,11 +74,6 @@ export default defineComponent({
     const param = ref();
     param.value = {};
     const categorys = ref();
-    const pagination = ref({
-      current: 1,
-      pageSize: 10,
-      total: 0
-    });
     const loading = ref(false);
     const columns = [
       {
@@ -103,41 +97,39 @@ export default defineComponent({
     ];
 
     /**
+     * 一级分类树，children属性就是二级分类
+     * [{
+     *   id: "",
+     *   name: "",
+     *   children: [{
+     *     id: "",
+     *     name: "",
+     *   }]
+     * }]
+     */
+    const level1 = ref(); // 一级分类树，children属性就是二级分类
+    level1.value = [];
+
+    /**
      * 数据查询
      **/
-    const handleQuery = (params: any) => {
+    const handleQuery = () => {
       loading.value = true;
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       categorys.value = [];
-      axios.get("/category/list", {
-        params: {
-          pageNum: params.pageNum,
-          pageSize: params.pageSize,
-          name: param.value.name
-        }
-      }).then((response) => {
+      axios.get("/category/all").then((response) => {
         loading.value = false;
         const data = response.data;
         if (data.code == 0) {
-          categorys.value = data.data.records;
+          categorys.value = data.data;
+          console.log("原始数组：", categorys.value);
 
-          // 重置分页按钮
-          pagination.value.current = params.pageNum;
-          pagination.value.total = data.data.total;
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys.value, 0);
+          console.log("树形结构：", level1);
         } else {
           message.error(data.message);
         }
-      });
-    };
-
-    /**
-     * 表格点击页码时触发
-     */
-    const handleTableChange = (pagination: any) => {
-      console.log("看看自带的分页参数都有啥：" + pagination);
-      handleQuery({
-        pageNum: pagination.current,
-        pageSize: pagination.pageSize
       });
     };
 
@@ -166,10 +158,7 @@ export default defineComponent({
         const data = response.data;
         if (data.code == 0) {
           // 重新加载列表
-          handleQuery({
-            pageNum: pagination.value.current,
-            pageSize: pagination.value.pageSize,
-          });
+          handleQuery();
         }
       });
     }
@@ -184,10 +173,7 @@ export default defineComponent({
         if (data.code == 0) {
           modalVisible.value = false;
           // 重新加载列表
-          handleQuery({
-            pageNum: pagination.value.current,
-            pageSize: pagination.value.pageSize,
-          });
+          handleQuery();
         } else {
           message.error(data.message);
         }
@@ -195,16 +181,14 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery({pageNum: 1, pageSize: 10});
+      handleQuery();
     });
 
     return {
       param,
-      categorys,
-      pagination,
+      level1,
       columns,
       loading,
-      handleTableChange,
       handleQuery,
 
       edit,

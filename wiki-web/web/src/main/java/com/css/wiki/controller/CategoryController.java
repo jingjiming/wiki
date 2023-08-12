@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * <p>
@@ -29,6 +30,12 @@ public class CategoryController {
     CategoryService categoryService;
     @Autowired
     SnowFlake snowFlake;
+
+    @GetMapping("/all")
+    public JsonResult<Category> all(@Valid CategoryQueryDTO dto) {
+        List<Category> list = this.categoryService.findAll(dto);
+        return JsonResult.ok().data(list);
+    }
 
     @GetMapping("/list")
     public JsonResult<Category> list(@Valid CategoryQueryDTO dto) {
