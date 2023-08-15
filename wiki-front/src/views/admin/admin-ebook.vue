@@ -26,6 +26,9 @@
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar" />
         </template>
+        <template v-slot:category="{ text, record }">
+          <span>{{ getCategoryName(record.categoryParentId) }} / {{ getCategoryName(record.categoryId) }}</span>
+        </template>
         <template v-slot:action="{ text, record }">
           <a-span size="small">
             <a-button type="primary" @click="edit(record)">编辑</a-button>
@@ -56,11 +59,12 @@
       <a-form-item label="名称">
         <a-input v-model:value="ebook.name" />
       </a-form-item>
-      <a-form-item label="分类1">
-        <a-input v-model:value="ebook.categoryParentId" />
-      </a-form-item>
-      <a-form-item label="分类2">
-        <a-input v-model:value="ebook.categoryId" />
+      <a-form-item label="分类">
+        <a-cascader
+          v-model:value="categoryIds"
+          :field-names="{label: 'name', value: 'id', children: 'children'}"
+          :options="level1"
+          placeholder="Please select" />
       </a-form-item>
       <a-form-item label="描述">
         <a-input v-model:value="ebook.description" type="textarea" />
@@ -98,14 +102,8 @@ export default defineComponent({
         dataIndex: 'name'
       },
       {
-        title: '分类一',
-        key: 'category1Id',
-        dataIndex: 'categoryParentId'
-      },
-      {
-        title: '分类二',
-        key: 'category2Id',
-        dataIndex: 'categoryId'
+        title: '分类',
+        slots: {customRender: 'category'}
       },
       {
         title: '文档数',
@@ -166,7 +164,11 @@ export default defineComponent({
     };
 
     // -------------- 表单 -------------
-    const ebook = ref({});
+    /**
+     * 级联组件 数组 [100, 101] 对应 前端开发 / Vue
+     */
+    const categoryIds = ref();
+    const ebook = ref();
     const modalVisible = ref<boolean>(false);
     const modalLoading = ref<boolean>(false);
     /**
@@ -175,7 +177,8 @@ export default defineComponent({
      */
     const edit = (record: any) => {
       modalVisible.value = true;
-      ebook.value = Tool.copy(record)
+      ebook.value = Tool.copy(record);
+      categoryIds.value = [ebook.value.categoryParentId, ebook.value.categoryId]
     };
     /**
      * 新增
@@ -200,6 +203,8 @@ export default defineComponent({
 
     const handleModalOk = (e: MouseEvent) => {
       modalLoading.value = true;
+      ebook.value.categoryParentId = categoryIds.value[0];
+      ebook.value.categoryId = categoryIds.value[1];
       console.log(e);
       // 保存数据
       axios.post("/ebook/add", ebook.value).then((response) => {
@@ -218,8 +223,49 @@ export default defineComponent({
       });
     };
 
+    const level1 =  ref();
+    let categorys: any;
+    /**
+     * 查询所有分类
+     **/
+    const handleQueryCategory = () => {
+      loading.value = true;
+      axios.get("/category/all").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.code === 0) {
+          categorys = data.data;
+          console.log("原始数组：", categorys);
+
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构：", level1.value);
+
+          // 加载完分类后，再加载电子书，否则如果分类树加载很慢，则电子书渲染会报错
+          handleQuery({
+            page: 1,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    const getCategoryName = (cid: number) => {
+      // console.log(cid)
+      let result = "";
+      categorys.forEach((item: any) => {
+        if (item.id === cid) {
+          // return item.name; // 注意，这里直接return不起作用
+          result = item.name;
+        }
+      });
+      return result;
+    };
+
     onMounted(() => {
-      handleQuery({pageNum: 1, pageSize: 10});
+      handleQueryCategory();
     });
 
     return {
@@ -230,6 +276,7 @@ export default defineComponent({
       loading,
       handleTableChange,
       handleQuery,
+      getCategoryName,
 
       edit,
       add,
@@ -238,6 +285,8 @@ export default defineComponent({
       modalVisible,
       modalLoading,
       handleModalOk,
+      categoryIds,
+      level1,
 
       del
     }

@@ -15,4 +15,7 @@ public class EbookQueryDTO extends PageParams {
 
     @ApiModelProperty("名称")
     private String name;
+
+    @ApiModelProperty("分类ID")
+    private Long categoryId;
 }

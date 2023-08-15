@@ -24,8 +24,9 @@ public class EbookServiceImpl extends ServiceImpl<EbookMapper, Ebook> implements
 
     @Override
     public Page<Ebook> findByPage(EbookQueryDTO dto) {
-        QueryWrapper<Ebook> qw = new QueryWrapper<Ebook>();
-        qw.like(StringUtils.isNotBlank(dto.getName()), "name", dto.getName());
+        QueryWrapper<Ebook> qw = new QueryWrapper<Ebook>()
+                .like(StringUtils.isNotBlank(dto.getName()), "name", dto.getName())
+                .eq(dto.getCategoryId() != null, "category_id", dto.getCategoryId());
         Page page = new Page(dto.getPageNum(), dto.getPageSize());
         return this.page(page, qw);
     }
