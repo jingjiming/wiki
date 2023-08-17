@@ -30,7 +30,10 @@
           <span>{{ getCategoryName(record.categoryParentId) }} / {{ getCategoryName(record.categoryId) }}</span>
         </template>
         <template v-slot:action="{ text, record }">
-          <a-span size="small">
+          <a-space size="small">
+            <router-link :to="'/admin/doc?ebookId=' + record.id">
+              <a-button type="primary">文档管理</a-button>
+            </router-link>
             <a-button type="primary" @click="edit(record)">编辑</a-button>
             <a-popconfirm
               title="删除后不可恢复，确认删除？"
@@ -40,7 +43,7 @@
             >
               <a-button type="danger">删除</a-button>
             </a-popconfirm>
-          </a-span>
+          </a-space>
         </template>
       </a-table>
     </a-layout-content>
