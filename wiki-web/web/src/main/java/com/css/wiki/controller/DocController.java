@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -59,9 +60,11 @@ public class DocController {
         return JsonResult.badRequest();
     }
 
-    @DeleteMapping("/delete/{id}")
-    public JsonResult delete(@PathVariable Long id) {
-        this.docService.removeById(id);
+    @DeleteMapping("/delete/{ids}")
+    public JsonResult delete(@PathVariable String ids) {
+        //this.docService.removeById(id);
+        List<String> list = Arrays.asList(ids.split(","));
+        this.docService.removeByIds(list);
         return JsonResult.ok();
     }
 }
