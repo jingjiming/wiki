@@ -67,6 +67,9 @@
       <a-form-item label="排序">
         <a-input v-model:value="doc.sort" />
       </a-form-item>
+      <a-form-item label="内容">
+        <div id="content"></div>
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>
@@ -78,6 +81,7 @@ import {message, Modal} from 'ant-design-vue';
 import { Tool } from "@/util/tool";
 import {useRoute} from "vue-router";
 import ExclamationCircleOutlined from "@ant-design/icons-vue/ExclamationCircleOutlined";
+import E from 'wangeditor';
 
 export default defineComponent({
   name: 'AdminDoc',
@@ -94,9 +98,7 @@ export default defineComponent({
     param.value = {};
     const docs = ref();
     const loading = ref(false);
-    // 因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
-    const treeSelectData = ref();
-    treeSelectData.value = [];
+
     const columns = [
       {
         title: '名称',
@@ -159,6 +161,11 @@ export default defineComponent({
     const doc = ref({});
     const modalVisible = ref<boolean>(false);
     const modalLoading = ref<boolean>(false);
+    // 因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
+    const treeSelectData = ref();
+    treeSelectData.value = [];
+    const editor = new E("#content");
+
 
     /**
      * 将某节点及其子孙节点全部置为disabled
@@ -240,6 +247,9 @@ export default defineComponent({
 
       // 为选择树添加一个"无"
       treeSelectData.value.unshift({id: 0, name: '无'});
+      setTimeout(function () {
+        editor.create();
+      }, 100)
     };
     /**
      * 新增
@@ -253,6 +263,9 @@ export default defineComponent({
 
       // 为选择树添加一个"无"
       treeSelectData.value.unshift({id: 0, name: '无'});
+      setTimeout(function () {
+        editor.create();
+      }, 100)
     };
 
     const del = (id: bigint) => {
