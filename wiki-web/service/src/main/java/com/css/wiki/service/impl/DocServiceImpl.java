@@ -25,9 +25,9 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements DocSe
 
     @Override
     public List<Doc> findAll(DocQueryDTO dto) {
-        QueryWrapper<Doc> qw = new QueryWrapper<Doc>();
-        qw.like(StringUtils.isNotBlank(dto.getName()), "name", dto.getName());
-
+        QueryWrapper<Doc> qw = new QueryWrapper<Doc>()
+                .eq("ebook_id", dto.getEbookId())
+                .like(StringUtils.isNotBlank(dto.getName()), "name", dto.getName());
         return this.list(qw);
     }
 

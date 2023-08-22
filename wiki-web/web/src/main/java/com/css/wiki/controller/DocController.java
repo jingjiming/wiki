@@ -6,7 +6,9 @@ import com.css.common.util.CopyUtil;
 import com.css.common.util.SnowFlake;
 import com.css.wiki.dto.DocAddDTO;
 import com.css.wiki.dto.DocQueryDTO;
+import com.css.wiki.entity.Content;
 import com.css.wiki.entity.Doc;
+import com.css.wiki.service.ContentService;
 import com.css.wiki.service.DocService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +32,13 @@ public class DocController {
     @Autowired
     DocService docService;
     @Autowired
+    ContentService contentService;
+    @Autowired
     SnowFlake snowFlake;
 
-    @GetMapping("/all")
-    public JsonResult<Doc> all(@Valid DocQueryDTO dto) {
+    @GetMapping("/all/{ebookId}")
+    public JsonResult<Doc> all(@PathVariable Long ebookId, @Valid DocQueryDTO dto) {
+        dto.setEbookId(ebookId);
         List<Doc> list = this.docService.findAll(dto);
         return JsonResult.ok().data(list);
     }
@@ -48,11 +53,18 @@ public class DocController {
     public JsonResult add(@Valid @RequestBody DocAddDTO dto) {
         boolean flag = false;
         Doc doc = CopyUtil.copy(dto, Doc.class);
+        Content content = CopyUtil.copy(dto, Content.class);
         if (doc.getId() == null) {
             doc.setId(this.snowFlake.nextId());
-            flag = this.docService.save(doc);
+            this.docService.save(doc);
+
+            content.setId(doc.getId());
+            this.contentService.save(content);
+            flag = true;
         } else {
-            flag = this.docService.updateById(doc);
+            this.docService.updateById(doc);
+            this.contentService.saveOrUpdate(content);
+            flag = true;
         }
         if (flag) {
             return JsonResult.ok();

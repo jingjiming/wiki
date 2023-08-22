@@ -13,6 +13,9 @@ import lombok.Data;
 @ApiModel(value = "Doc查询参数DTO", description = "文档查询参数DTO")
 public class DocQueryDTO extends PageParams {
 
+    @ApiModelProperty("电子书ID")
+    private Long ebookId;
+
     @ApiModelProperty("名称")
     private String name;
 }

@@ -51,5 +51,9 @@ public class DocAddDTO implements Serializable {
     @ApiModelProperty("点赞数")
     private Integer voteCount;
 
+    @ApiModelProperty("内容")
+    @NotNull(message = "【内容】不能为空")
+    private String content;
+
 
 }
