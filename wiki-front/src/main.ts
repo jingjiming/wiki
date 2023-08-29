@@ -8,6 +8,7 @@ import * as Icons from '@ant-design/icons-vue';
 import axios from 'axios';
 
 import JSONBIG from 'json-bigint';
+import {Tool} from "@/util/tool";
 
 axios.defaults.baseURL = process.env.VUE_APP_SERVER;
 
@@ -24,6 +25,11 @@ axios.defaults.transformResponse = [
  */
 axios.interceptors.request.use(config => {
   console.log('请求参数:', config);
+  const token = store.state.user.token;
+  if (Tool.isNotEmpty(token)) {
+    config.headers.token = token;
+    console.log("请求headers增加token:", token);
+  }
   return config;
 }, error => {
   return Promise.reject(error);

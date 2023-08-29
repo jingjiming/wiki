@@ -22,33 +22,29 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("T_USER")
+@TableName("user")
 @ApiModel(value = "User对象", description = "用户信息表")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("用户ID")
-    @TableId("USER_ID")
-    private String userId;
+    @TableId("id")
+    private Long id;
 
-    @ApiModelProperty("用户姓名")
-    @TableField("USER_NAME")
-    private String userName;
+    @ApiModelProperty("登录名")
+    @TableField("login_name")
+    private String loginName;
 
-    @ApiModelProperty("年龄")
-    @TableField("AGE")
-    private Integer age;
+    @ApiModelProperty("昵称")
+    @TableField("name")
+    private String name;
 
-    @ApiModelProperty("性别 0-男 1-女")
-    @TableField("GENDER")
-    private Integer gender;
+    @ApiModelProperty("密码")
+    @TableField("password")
+    private String password;
 
-    @ApiModelProperty("身份证号")
-    @TableField("ID_CARD")
-    private String idCard;
-
-    @ApiModelProperty("删除标识 0-否 1-是")
+    /*@ApiModelProperty("删除标识 0-否 1-是")
     @TableField("DEL_FLAG")
     @TableLogic(value = "0", delval = "1")
     private Integer delFlag;
@@ -67,6 +63,6 @@ public class User implements Serializable {
 
     @ApiModelProperty("修改时间")
     @TableField(value = "LAST_TIME", fill = FieldFill.INSERT_UPDATE)
-    private Date lastTime;
+    private Date lastTime;*/
 
 }

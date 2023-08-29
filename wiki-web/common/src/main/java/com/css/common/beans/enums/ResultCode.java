@@ -12,13 +12,15 @@ public enum ResultCode implements IErrCode {
     ERROR(999, "系统报错，请联系运维人员！"),
     SESSION_TIMEOUT(911, "session timeout."),
     DATA_ACCESS_ERROR(912, "数据访问异常"),
-    ALPHA_ERROR_PARAMETER(40000, "参数错误"),
-    ALPHA_ERROR_PARAMETER_NULL(40001, "空的请求参数"),
-    ALPHA_ERROR_PARAMETER_INVALID(40002, "无效的请求参数"),
+    ERROR_PARAMETER(40000, "参数错误"),
+    ERROR_PARAMETER_NULL(40001, "空的请求参数"),
+    ERROR_PARAMETER_INVALID(40002, "无效的请求参数"),
 
     NOT_LOGIN(-1, "用户登录信息失效，请退出重新登录"),
     NO_TOKEN(10001, "缺失token"),
-    EXPIRED_TOKEN(10002, "token已过期")
+    EXPIRED_TOKEN(10002, "token已过期"),
+    USER_EXISTS(10003, "用户已存在"),
+    LOGIN_USER_ERROR(10004, "用户名不存在或密码错误"),
     ;
 
     private final int code;

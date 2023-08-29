@@ -6,14 +6,16 @@ import com.css.common.beans.response.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * 通用异常处理类
+ * 通用异常处理类 GlobalException
  * 异常采用统一的信息格式表示
  * Created by jiming.jing on 2020/4/2.
  */
@@ -22,6 +24,14 @@ public class CommonExceptionAdvice {
 
     private static Logger logger = LoggerFactory.getLogger(CommonExceptionAdvice.class);
 
+    @ExceptionHandler(value = BindException.class)
+    @ResponseBody
+    public JsonResult<?> handleException(BindException e) {
+        logger.warn("Exception[参数校验失败:{}]", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        //e.printStackTrace();
+        return JsonResult.badRequest(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+    }
+    
     @ExceptionHandler(GenericBusinessException.class)
     public IResult handleException(GenericBusinessException e) {
         logger.error("GenericBusinessException[errorCode:{}, message:{}]", e.getErrorCode(), e.getMessage(), e);

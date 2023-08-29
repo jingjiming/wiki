@@ -41,4 +41,9 @@ public class GenericBusinessException extends RuntimeException {
     public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
+
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }
