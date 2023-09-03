@@ -4,6 +4,7 @@ import com.css.common.beans.response.JsonResult;
 import com.css.common.util.StringUtils;
 import com.css.wiki.entity.Content;
 import com.css.wiki.service.ContentService;
+import com.css.wiki.service.DocService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,10 +25,13 @@ public class ContentController {
 
     @Autowired
     ContentService contentService;
+    @Autowired
+    DocService docService;
 
     @GetMapping("/get/{id}")
     public JsonResult<String> getContent(@PathVariable String id) {
         Content content = this.contentService.getById(id);
+        this.docService.updateViewCount(Long.valueOf(id));
         return JsonResult.ok().data(content != null ? content.getContent() : "");
     }
 

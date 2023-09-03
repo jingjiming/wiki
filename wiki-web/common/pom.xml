@@ -46,6 +46,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- 集成websocket -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
         <!-- mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>

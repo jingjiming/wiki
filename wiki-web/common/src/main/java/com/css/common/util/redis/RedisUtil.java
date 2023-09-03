@@ -1,5 +1,7 @@
 package com.css.common.util.redis;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class RedisUtil {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RedisUtil.class);
 
     /**
      * redisTemplate.opsForValue(); //操作字符串
@@ -251,6 +255,24 @@ public class RedisUtil {
         });
         List<String> collect = list.stream().map(val -> String.valueOf(val)).collect(Collectors.toList());
         return collect;
+    }
+
+    /**
+     * true：不存在，放一个KEY
+     * false：已存在
+     * @param key
+     * @param second
+     * @return
+     */
+    public boolean validateRepeat(String key, long second) {
+        if (redisTemplate.hasKey(key)) {
+            LOG.info("key已存在：{}", key);
+            return false;
+        } else {
+            LOG.info("key不存在，放入：{}，过期 {} 秒", key, second);
+            redisTemplate.opsForValue().set(key, key, second, TimeUnit.SECONDS);
+            return true;
+        }
     }
 
 }

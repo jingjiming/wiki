@@ -2,6 +2,8 @@ package com.css.wiki.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
+import com.css.common.util.SnowFlake;
+import com.css.wiki.util.RequestContext;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -32,14 +34,14 @@ public class LogAspect {
     @Pointcut("execution(public * com.css.*.controller..*Controller.*(..))")
     public void controllerPointcut() {}
 
-    /*@Resource
-    private SnowFlake snowFlake;*/
+    @Resource
+    private SnowFlake snowFlake;
 
     @Before("controllerPointcut()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
 
         // 增加日志流水号
-        //MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
+        MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
 
         // 开始打印请求日志
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -53,7 +55,7 @@ public class LogAspect {
         LOG.info("类名方法: {}.{}", signature.getDeclaringTypeName(), name);
         LOG.info("远程地址: {}", request.getRemoteAddr());
 
-        //RequestContext.setRemoteAddr(getRemoteIp(request));
+        RequestContext.setRemoteAddr(getRemoteIp(request));
 
         // 打印请求参数
         Object[] args = joinPoint.getArgs();

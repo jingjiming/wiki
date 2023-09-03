@@ -21,6 +21,8 @@ public enum ResultCode implements IErrCode {
     EXPIRED_TOKEN(10002, "token已过期"),
     USER_EXISTS(10003, "用户已存在"),
     LOGIN_USER_ERROR(10004, "用户名不存在或密码错误"),
+
+    VOTE_REPEAT(10005, "你已点赞过~"),
     ;
 
     private final int code;

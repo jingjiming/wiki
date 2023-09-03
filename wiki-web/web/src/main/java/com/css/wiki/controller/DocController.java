@@ -31,10 +31,6 @@ public class DocController {
 
     @Autowired
     DocService docService;
-    @Autowired
-    ContentService contentService;
-    @Autowired
-    SnowFlake snowFlake;
 
     @GetMapping("/all/{ebookId}")
     public JsonResult<Doc> all(@PathVariable Long ebookId, @Valid DocQueryDTO dto) {
@@ -51,25 +47,7 @@ public class DocController {
 
     @PostMapping("/add")
     public JsonResult add(@Valid @RequestBody DocAddDTO dto) {
-        boolean flag = false;
-        Doc doc = CopyUtil.copy(dto, Doc.class);
-        Content content = CopyUtil.copy(dto, Content.class);
-        if (doc.getId() == null) {
-            doc.setId(this.snowFlake.nextId());
-            this.docService.save(doc);
-
-            content.setId(doc.getId());
-            this.contentService.save(content);
-            flag = true;
-        } else {
-            this.docService.updateById(doc);
-            this.contentService.saveOrUpdate(content);
-            flag = true;
-        }
-        if (flag) {
-            return JsonResult.ok();
-        }
-        return JsonResult.badRequest();
+        return this.docService.add(dto);
     }
 
     @DeleteMapping("/delete/{ids}")
@@ -77,6 +55,12 @@ public class DocController {
         //this.docService.removeById(id);
         List<String> list = Arrays.asList(ids.split(","));
         this.docService.removeByIds(list);
+        return JsonResult.ok();
+    }
+
+    @GetMapping("/vote/{id}")
+    public JsonResult vote(@PathVariable Long id) {
+        this.docService.vote(id);
         return JsonResult.ok();
     }
 }

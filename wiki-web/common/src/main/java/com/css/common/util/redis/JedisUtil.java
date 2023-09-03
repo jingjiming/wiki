@@ -60,6 +60,20 @@ public class JedisUtil {
     }
 
     /**
+     * 判断key是否存在
+     * @param key
+     * @return boolean true/false
+     */
+    public boolean exists(String key) {
+        try (Jedis jedis = this.jedisPool.getResource()) {
+            return jedis.exists(key);
+        } catch (Exception ex) {
+            logger.error("set error.", ex);
+        }
+        return false;
+    }
+
+    /**
      * 设置 key 的过期时间，key 过期后将不再可用
      * @param key
      * @param seconds 秒
@@ -907,4 +921,26 @@ public class JedisUtil {
         return null;
     }
 
+    /**
+     * true：不存在，放一个KEY
+     * false：已存在
+     * @param key
+     * @param second
+     * @return
+     */
+    public boolean validateRepeat(String key, long second) {
+        try (Jedis jedis = this.jedisPool.getResource()) {
+            if (jedis.exists(key)) {
+                logger.info("key已存在：{}", key);
+                return false;
+            } else {
+                logger.info("key不存在，放入：{}，过期 {} 秒", key, second);
+                jedis.setex(key, second, key);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
