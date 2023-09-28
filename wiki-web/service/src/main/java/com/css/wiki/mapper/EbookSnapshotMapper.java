@@ -2,7 +2,10 @@ package com.css.wiki.mapper;
 
 import com.css.wiki.entity.EbookSnapshot;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.css.wiki.vo.StatisticVO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface EbookSnapshotMapper extends BaseMapper<EbookSnapshot> {
 
+    void createSnapshot();
+
+    List<StatisticVO> selectStatistic();
+
+    List<StatisticVO> select30Statistic();
 }
